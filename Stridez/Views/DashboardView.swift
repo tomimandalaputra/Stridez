@@ -8,24 +8,31 @@
 import SwiftUI
 
 struct DashboardView: View {
+	@State private var selectedTab: HealthMetricContext = .steps
+
+	private var colorNavigationStack: Color {
+		selectedTab == .steps ? Color.pink : Color.indigo
+	}
+
 	fileprivate var StepsView: some View {
 		VStack {
-			HStack {
-				VStack {
-					Label("Steps", systemImage: "figure.walk")
-						.font(.title3.bold())
-						.foregroundStyle(.pink)
+			NavigationLink(value: selectedTab) {
+				HStack {
+					VStack {
+						Label("Steps", systemImage: "figure.walk")
+							.font(.title3.bold())
+							.foregroundStyle(.pink)
 
-					Text("Avg: 10K Steps")
-						.font(.caption)
-						.foregroundStyle(.secondary)
+						Text("Avg: 10K Steps")
+							.font(.caption)
+					}
+
+					Spacer()
+
+					Image(systemName: "chevron.right")
 				}
-
-				Spacer()
-
-				Image(systemName: "chevron.right")
-					.foregroundStyle(.secondary)
 			}
+			.foregroundStyle(.secondary)
 			.padding(.bottom, 12)
 
 			RoundedRectangle(cornerRadius: 12)
@@ -61,13 +68,25 @@ struct DashboardView: View {
 		NavigationStack {
 			ScrollView {
 				VStack(spacing: 24) {
+					Picker("Selected Tab", selection: $selectedTab) {
+						ForEach(HealthMetricContext.allCases) { metric in
+							Text(metric.title)
+								.tag(metric)
+						}
+					}
+					.pickerStyle(.segmented)
+
 					StepsView
 					AveragesView
 				}
 			}
 			.padding()
 			.navigationTitle("Dashboard")
+			.navigationDestination(for: HealthMetricContext.self) { metric in
+				Text(metric.title)
+			}
 		}
+		.tint(colorNavigationStack)
 	}
 }
 
