@@ -18,16 +18,25 @@ struct DashboardView: View {
 		selectedTab == .steps ? Color.pink : Color.indigo
 	}
 
+	var avgStepCount: Double {
+		guard !hkManager.stepData.isEmpty else {
+			return 0
+		}
+
+		let totalSteps = hkManager.stepData.reduce(0) { $0 + $1.value }
+		return totalSteps / Double(hkManager.stepData.count)
+	}
+
 	fileprivate var StepsView: some View {
 		VStack {
 			NavigationLink(value: selectedTab) {
 				HStack {
-					VStack {
+					VStack(alignment: .leading) {
 						Label("Steps", systemImage: "figure.walk")
 							.font(.title3.bold())
 							.foregroundStyle(.pink)
 
-						Text("Avg: 10K Steps")
+						Text("Avg: \(Int(avgStepCount)) steps")
 							.font(.caption)
 					}
 
@@ -41,13 +50,29 @@ struct DashboardView: View {
 
 			Chart {
 				ForEach(hkManager.stepData) { steps in
+					RuleMark(y: .value("Average", avgStepCount))
+						.foregroundStyle(Color.secondary)
+						.lineStyle(.init(lineWidth: 1, dash: [5]))
+
 					BarMark(
 						x: .value("Date", steps.date, unit: .day),
 						y: .value("Steps", steps.value)
 					)
+					.foregroundStyle(Color.pink.gradient)
 				}
 			}
 			.frame(height: 150)
+			.chartXAxis {
+				AxisMarks {
+					AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+				}
+			}
+			.chartYAxis {
+				AxisMarks { value in
+					AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
+					AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+				}
+			}
 		}
 		.padding()
 		.background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemFill)))
