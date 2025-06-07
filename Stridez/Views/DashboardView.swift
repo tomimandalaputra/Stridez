@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct DashboardView: View {
+	@Environment(HealthKitManager.self) private var hkManager
+	@AppStorage("hasSeenPermissionPriming") private var hasSeenPermissionPriming = false
+	@State private var isShowingPermissionPrimingSheet = false
 	@State private var selectedTab: HealthMetricContext = .steps
 
 	private var colorNavigationStack: Color {
@@ -80,10 +83,18 @@ struct DashboardView: View {
 				}
 			}
 			.padding()
+			.task {
+				isShowingPermissionPrimingSheet = !hasSeenPermissionPriming
+			}
 			.navigationTitle("Dashboard")
 			.navigationDestination(for: HealthMetricContext.self) { metric in
 				HealthDataListView(metric: metric)
 			}
+			.sheet(isPresented: $isShowingPermissionPrimingSheet, onDismiss: {
+				// fetch health data
+			}, content: {
+				HealthKitPermissionPrimingView(hasSeen: $hasSeenPermissionPriming)
+			})
 		}
 		.tint(colorNavigationStack)
 	}
@@ -91,4 +102,5 @@ struct DashboardView: View {
 
 #Preview {
 	DashboardView()
+		.environment(HealthKitManager())
 }

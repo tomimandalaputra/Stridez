@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct StridezApp: App {
+	let hkManager = HealthKitManager()
+
 	var body: some Scene {
 		WindowGroup {
 			DashboardView()
+				.environment(hkManager)
 		}
 	}
 }
