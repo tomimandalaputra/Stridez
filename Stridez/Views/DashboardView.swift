@@ -69,9 +69,8 @@ struct DashboardView: View {
 			ScrollView {
 				VStack(spacing: 24) {
 					Picker("Selected Tab", selection: $selectedTab) {
-						ForEach(HealthMetricContext.allCases) { metric in
-							Text(metric.title)
-								.tag(metric)
+						ForEach(HealthMetricContext.allCases) {
+							Text($0.title).tag($0)
 						}
 					}
 					.pickerStyle(.segmented)
