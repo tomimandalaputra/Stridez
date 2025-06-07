@@ -11,13 +11,15 @@ import SwiftUI
 struct HealthKitPermissionPrimingView: View {
 	@Environment(HealthKitManager.self) private var hkManager
 	@Environment(\.dismiss) private var dismiss
-	@State private var isShowingHealthKitPersmission: Bool = false
+	@State private var isShowingHealthKitPermissions = false
+	@Binding var hasSeen: Bool
 
-	private var description: String = """
-	This app displays your step and weight data in intractive charts.
+	var description = """
+	This app displays your step and weight data in interactive charts.
 
-	You can also add new step or weight ada to Apple Health from this app. Your data is private and secured.
+	You can also add new step or weight data to Apple Health from this app. Your data is private and secured.
 	"""
+
 	var body: some View {
 		VStack(alignment: .leading) {
 			Spacer()
@@ -39,7 +41,7 @@ struct HealthKitPermissionPrimingView: View {
 			Spacer()
 
 			Button(action: {
-				isShowingHealthKitPersmission = true
+				isShowingHealthKitPermissions = true
 			}, label: {
 				Text("Connect Apple Health")
 					.fontWeight(.semibold)
@@ -50,25 +52,25 @@ struct HealthKitPermissionPrimingView: View {
 			.tint(.pink)
 		}
 		.padding()
-		.healthDataAccessRequest(
-			store: hkManager.store,
-			shareTypes: hkManager.types,
-			readTypes: hkManager.types,
-			trigger: isShowingHealthKitPersmission,
-			completion: { result in
-				switch result {
-					case .success:
-						dismiss()
-					case .failure(let error):
-						print("*** An error occurred while requesting authentication: \(error) ***")
-						dismiss()
-				}
+		.interactiveDismissDisabled()
+		.onAppear { hasSeen = true }
+		.healthDataAccessRequest(store: hkManager.store,
+		                         shareTypes: hkManager.types,
+		                         readTypes: hkManager.types,
+		                         trigger: isShowingHealthKitPermissions)
+		{ result in
+			switch result {
+			case .success:
+				dismiss()
+			case .failure:
+				// handle the error later
+				dismiss()
 			}
-		)
+		}
 	}
 }
 
 #Preview {
-	HealthKitPermissionPrimingView()
+	HealthKitPermissionPrimingView(hasSeen: .constant(true))
 		.environment(HealthKitManager())
 }
