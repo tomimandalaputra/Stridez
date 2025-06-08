@@ -5,7 +5,6 @@
 //  Created by tukucode on 07/06/25.
 //
 
-import Charts
 import SwiftUI
 
 struct DashboardView: View {
@@ -16,27 +15,6 @@ struct DashboardView: View {
 
 	private var colorNavigationStack: Color {
 		selectedTab == .steps ? Color.pink : Color.indigo
-	}
-
-	fileprivate var AveragesView: some View {
-		VStack(alignment: .leading) {
-			VStack(alignment: .leading) {
-				Label("Averages", systemImage: "calendar")
-					.font(.title3.bold())
-					.foregroundStyle(.pink)
-
-				Text("Last 10 Days")
-					.font(.caption)
-					.foregroundStyle(.secondary)
-			}
-			.padding(.bottom, 12)
-
-			RoundedRectangle(cornerRadius: 12)
-				.foregroundStyle(.secondary)
-				.frame(height: 240)
-		}
-		.padding()
-		.background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemFill)))
 	}
 
 	var body: some View {
@@ -50,8 +28,12 @@ struct DashboardView: View {
 					}
 					.pickerStyle(.segmented)
 
-					StepBarChart(selectedTab: selectedTab, chartData: hkManager.stepData)
-					AveragesView
+					StepBarChart(
+						selectedTab: selectedTab,
+						chartData: hkManager.stepData
+					)
+
+					StepPieChart(chartData: ChartMath.averageWeekDayCount(for: hkManager.stepData))
 				}
 			}
 			.padding()
