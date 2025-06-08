@@ -52,29 +52,29 @@ struct StepBarChart: View {
 			.padding(.bottom, 12)
 
 			Chart {
+				if let seletedHealthMetric {
+					RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
+						.foregroundStyle(Color.secondary.opacity(0.3))
+						.offset(y: -10)
+						.annotation(
+							position: .top,
+							alignment: .center,
+							spacing: 0,
+							overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
+							content: {
+								AnnotationView(
+									seletedDate: seletedHealthMetric.date,
+									seletedValue: seletedHealthMetric.value
+								)
+							}
+						)
+				}
+
+				RuleMark(y: .value("Average", avgStepCount))
+					.foregroundStyle(Color.secondary)
+					.lineStyle(.init(lineWidth: 1, dash: [5]))
+
 				ForEach(chartData) { steps in
-					if let seletedHealthMetric {
-						RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
-							.foregroundStyle(Color.secondary.opacity(0.3))
-							.offset(y: -10)
-							.annotation(
-								position: .top,
-								alignment: .center,
-								spacing: 0,
-								overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
-								content: {
-									AnnotationView(
-										seletedDate: seletedHealthMetric.date,
-										seletedValue: seletedHealthMetric.value
-									)
-								}
-							)
-					}
-
-					RuleMark(y: .value("Average", avgStepCount))
-						.foregroundStyle(Color.secondary)
-						.lineStyle(.init(lineWidth: 1, dash: [5]))
-
 					BarMark(
 						x: .value("Date", steps.date, unit: .day),
 						y: .value("Steps", steps.value)

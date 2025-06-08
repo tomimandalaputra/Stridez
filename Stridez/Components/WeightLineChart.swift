@@ -9,8 +9,17 @@ import Charts
 import SwiftUI
 
 struct WeightLineChart: View {
+	@State private var rawSelectedDate: Date?
+
 	var selectedTab: HealthMetricContext
 	var chartData: [HealthMetric]
+
+	var seletedHealthMetric: HealthMetric? {
+		guard let rawSelectedDate else { return nil }
+		return chartData.first {
+			Calendar.current.isDate(rawSelectedDate, inSameDayAs: $0.date)
+		}
+	}
 
 	var minValue: Double {
 		chartData.map { $0.value }.min() ?? 0
@@ -38,6 +47,25 @@ struct WeightLineChart: View {
 			.padding(.bottom, 12)
 
 			Chart {
+				if let seletedHealthMetric {
+					RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
+						.foregroundStyle(Color.secondary.opacity(0.3))
+						.offset(y: -10)
+						.annotation(
+							position: .top,
+							alignment: .center,
+							spacing: 0,
+							overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
+							content: {
+								AnnotationView(
+									seletedDate: seletedHealthMetric.date,
+									seletedValue: seletedHealthMetric.value,
+									typeHealthMerticContext: selectedTab
+								)
+							}
+						)
+				}
+
 				RuleMark(y: .value("Goal", 155))
 					.foregroundStyle(Color.mint)
 					.lineStyle(.init(lineWidth: 1, dash: [5]))
@@ -66,6 +94,7 @@ struct WeightLineChart: View {
 				}
 			}
 			.frame(height: 150)
+			.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
 			.chartYScale(domain: .automatic(includesZero: false))
 			.chartXAxis {
 				AxisMarks {
