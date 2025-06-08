@@ -35,7 +35,7 @@ struct DashboardView: View {
 								chartData: hkManager.stepData
 							)
 
-							StepPieChart(chartData: ChartMath.averageWeekDayCount(for: hkManager.stepData))
+							StepPieChart(chartData: ChartMath.averageWeekdayCount(for: hkManager.stepData))
 						case .weight:
 							WeightLineChart(
 								selectedTab: selectedTab,
