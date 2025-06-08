@@ -28,17 +28,29 @@ struct DashboardView: View {
 					}
 					.pickerStyle(.segmented)
 
-					StepBarChart(
-						selectedTab: selectedTab,
-						chartData: hkManager.stepData
-					)
+					switch selectedTab {
+						case .steps:
+							StepBarChart(
+								selectedTab: selectedTab,
+								chartData: hkManager.stepData
+							)
 
-					StepPieChart(chartData: ChartMath.averageWeekDayCount(for: hkManager.stepData))
+							StepPieChart(chartData: ChartMath.averageWeekdayCount(for: hkManager.stepData))
+						case .weight:
+							WeightLineChart(
+								selectedTab: selectedTab,
+								chartData: hkManager.weightData
+							)
+
+							WeightDiffBarChart(chartData: ChartMath.averageDailyWeightDiffs(for: hkManager.weightDiffData))
+					}
 				}
 			}
 			.padding()
 			.task {
 				await hkManager.fetchStepCount()
+				await hkManager.fetchWeights()
+				await hkManager.fetchWeightForDifferentials()
 				isShowingPermissionPrimingSheet = !hasSeenPermissionPriming
 			}
 			.navigationTitle("Dashboard")

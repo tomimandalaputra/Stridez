@@ -10,6 +10,8 @@ import SwiftUI
 struct AnnotationView: View {
 	var seletedDate: Date?
 	var seletedValue: Double?
+	var fractionLenghtValue: Int = 0
+	var styleTextColor: Color = .pink
 
 	private var showTextDate: Date {
 		guard let seletedDate else {
@@ -33,9 +35,9 @@ struct AnnotationView: View {
 				.font(.footnote.bold())
 				.foregroundStyle(Color.secondary)
 
-			Text(showTextValue, format: .number.precision(.fractionLength(0)))
+			Text(showTextValue, format: .number.precision(.fractionLength(fractionLenghtValue)))
 				.fontWeight(.heavy)
-				.foregroundStyle(Color.pink)
+				.foregroundStyle(styleTextColor)
 		}
 		.padding(12)
 		.background(

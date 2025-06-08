@@ -9,9 +9,9 @@ import Charts
 import SwiftUI
 
 struct StepPieChart: View {
-	@State private var rawSelectedChartValue: Double?
+	@State private var rawSelectedChartValue: Double? = 0
 
-	var seletedWeekday: WeekdayChartData? {
+	var selectedWeekday: WeekdayChartData? {
 		guard let rawSelectedChartValue else { return nil }
 		var total = 0.0
 		return chartData.first {
@@ -29,7 +29,7 @@ struct StepPieChart: View {
 					.font(.title3.bold())
 					.foregroundStyle(.pink)
 
-				Text("Last 10 Days")
+				Text("Last 28 Days")
 					.font(.caption)
 					.foregroundStyle(.secondary)
 			}
@@ -40,12 +40,12 @@ struct StepPieChart: View {
 					SectorMark(
 						angle: .value("Average Steps", weekday.value),
 						innerRadius: .ratio(0.618),
-						outerRadius: seletedWeekday?.date.weekdayInt == weekday.date.weekdayInt ? 140 : 110,
+						outerRadius: selectedWeekday?.date.weekdayInt == weekday.date.weekdayInt ? 140 : 110,
 						angularInset: 1
 					)
 					.foregroundStyle(Color.pink.gradient)
 					.cornerRadius(8)
-					.opacity(rawSelectedChartValue == nil || seletedWeekday?.date.weekdayInt == weekday.date.weekdayInt ? 1.0 : 0.3)
+					.opacity(selectedWeekday?.date.weekdayInt == weekday.date.weekdayInt ? 1.0 : 0.3)
 				}
 			}
 			.frame(height: 240)
@@ -53,17 +53,18 @@ struct StepPieChart: View {
 			.chartBackground { proxy in
 				GeometryReader { geo in
 					if let plotFrame = proxy.plotFrame,
-					   let seletedWeekday
+					   let selectedWeekday
 					{
 						let frame = geo[plotFrame]
-
 						VStack {
-							Text(seletedWeekday.date.weekdayTitle)
+							Text(selectedWeekday.date.weekdayTitle)
 								.font(.title3.bold())
+								.contentTransition(.identity)
 
-							Text(seletedWeekday.value, format: .number.precision(.fractionLength(0)))
+							Text(selectedWeekday.value, format: .number.precision(.fractionLength(0)))
 								.fontWeight(.medium)
-								.foregroundStyle(Color.secondary)
+								.foregroundStyle(.secondary)
+								.contentTransition(.numericText())
 						}
 						.position(x: frame.midX, y: frame.midY)
 					}
@@ -76,5 +77,5 @@ struct StepPieChart: View {
 }
 
 #Preview {
-	StepPieChart(chartData: ChartMath.averageWeekDayCount(for: HealthMetric.mockData))
+	StepPieChart(chartData: ChartMath.averageWeekdayCount(for: MockData.steps))
 }
