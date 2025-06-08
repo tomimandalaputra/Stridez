@@ -60,7 +60,8 @@ struct WeightLineChart: View {
 								AnnotationView(
 									seletedDate: seletedHealthMetric.date,
 									seletedValue: seletedHealthMetric.value,
-									typeHealthMerticContext: selectedTab
+									fractionLenghtValue: 1,
+									styleTextColor: .indigo
 								)
 							}
 						)

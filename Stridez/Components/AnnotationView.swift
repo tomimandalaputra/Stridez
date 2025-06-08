@@ -10,7 +10,8 @@ import SwiftUI
 struct AnnotationView: View {
 	var seletedDate: Date?
 	var seletedValue: Double?
-	var typeHealthMerticContext: HealthMetricContext = .steps
+	var fractionLenghtValue: Int = 0
+	var styleTextColor: Color = .pink
 
 	private var showTextDate: Date {
 		guard let seletedDate else {
@@ -28,19 +29,6 @@ struct AnnotationView: View {
 		return seletedValue
 	}
 
-	private var fractionLenghtValue: Int {
-		typeHealthMerticContext == .steps ? 0 : 1
-	}
-
-	private var foregroundColorTextValue: Color {
-		switch typeHealthMerticContext {
-			case .steps:
-				return Color.pink
-			case .weight:
-				return Color.indigo
-		}
-	}
-
 	var body: some View {
 		VStack {
 			Text(showTextDate, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
@@ -49,7 +37,7 @@ struct AnnotationView: View {
 
 			Text(showTextValue, format: .number.precision(.fractionLength(fractionLenghtValue)))
 				.fontWeight(.heavy)
-				.foregroundStyle(foregroundColorTextValue)
+				.foregroundStyle(styleTextColor)
 		}
 		.padding(12)
 		.background(

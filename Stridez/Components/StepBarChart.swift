@@ -64,7 +64,7 @@ struct StepBarChart: View {
 							content: {
 								AnnotationView(
 									seletedDate: seletedHealthMetric.date,
-									seletedValue: seletedHealthMetric.value
+									seletedValue: seletedHealthMetric.value,
 								)
 							}
 						)
