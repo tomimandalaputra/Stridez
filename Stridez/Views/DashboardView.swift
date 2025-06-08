@@ -41,6 +41,8 @@ struct DashboardView: View {
 								selectedTab: selectedTab,
 								chartData: hkManager.weightData
 							)
+
+							WeightDiffBarChart(chartData: ChartMath.averageDailyWeightDiffs(for: hkManager.weightDiffData))
 					}
 				}
 			}
@@ -48,6 +50,7 @@ struct DashboardView: View {
 			.task {
 				await hkManager.fetchStepCount()
 				await hkManager.fetchWeights()
+				await hkManager.fetchWeightForDifferentials()
 				isShowingPermissionPrimingSheet = !hasSeenPermissionPriming
 			}
 			.navigationTitle("Dashboard")
