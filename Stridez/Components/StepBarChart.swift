@@ -103,5 +103,5 @@ struct StepBarChart: View {
 }
 
 #Preview {
-	StepBarChart(selectedTab: HealthMetricContext.steps, chartData: HealthMetric.mockData)
+	StepBarChart(selectedTab: HealthMetricContext.steps, chartData: MockData.steps)
 }
