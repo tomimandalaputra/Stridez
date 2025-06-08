@@ -10,8 +10,8 @@ import Foundation
 
 struct ChartMath {
 	static func averageWeekDayCount(for metric: [HealthMetric]) -> [WeekdayChartData] {
-		let sortedByWeekday = metric.sorted { $0.date.weekDayInt < $1.date.weekDayInt }
-		let weekdayArray = sortedByWeekday.chunked { $0.date.weekDayInt == $1.date.weekDayInt }
+		let sortedByWeekday = metric.sorted { $0.date.weekdayInt < $1.date.weekdayInt }
+		let weekdayArray = sortedByWeekday.chunked { $0.date.weekdayInt == $1.date.weekdayInt }
 
 		var weekdayChartData: [WeekdayChartData] = []
 
