@@ -59,9 +59,9 @@ struct AddDataView: View {
 			.alert(isPresented: $viewModel.isShowingAlert, error: viewModel.writeError) { fetchError in
 				// Actions
 				switch fetchError {
-					case .noData, .authNotDetermined, .unableToCompleteRequest:
+					case .noData, .authNotDetermined, .unableToCompleteRequest, .invalidValue:
 						EmptyView()
-					case .sharingDenied(let quantityType):
+					case .sharingDenied:
 						Button("Settings", action: {
 							UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
 						})
@@ -75,12 +75,19 @@ struct AddDataView: View {
 	}
 
 	private func addData() async {
+		guard let value = Double(valueToAdd.replacingOccurrences(of: ",", with: ".")) else {
+			viewModel.writeError = .invalidValue
+			viewModel.isShowingAlert = true
+			valueToAdd = ""
+			return
+		}
+
 		if metric == .steps {
 			do {
-				try await hkManager.addStepData(for: addDataDate, value: Double(valueToAdd)!)
+				try await hkManager.addStepData(for: addDataDate, value: value)
 				try await hkManager.fetchStepCount()
 				dismiss()
-			} catch CustomError.sharingDenied(let quantityType) {
+			} catch let CustomError.sharingDenied(quantityType) {
 				viewModel.writeError = .sharingDenied(quantityType: quantityType)
 				viewModel.isShowingAlert = true
 			} catch {
@@ -89,11 +96,11 @@ struct AddDataView: View {
 			}
 		} else {
 			do {
-				try await hkManager.addWeightData(for: addDataDate, value: Double(valueToAdd)!)
+				try await hkManager.addWeightData(for: addDataDate, value: value)
 				try await hkManager.fetchWeights()
 				try await hkManager.fetchWeightForDifferentials()
 				dismiss()
-			} catch CustomError.sharingDenied(let quantityType) {
+			} catch let CustomError.sharingDenied(quantityType) {
 				viewModel.writeError = .sharingDenied(quantityType: quantityType)
 				viewModel.isShowingAlert = true
 			} catch {
