@@ -68,7 +68,7 @@ struct WeightLineChart: View {
 						)
 				}
 
-				RuleMark(y: .value("Goal", 155))
+				RuleMark(y: .value("Goal", 138))
 					.foregroundStyle(Color.mint)
 					.lineStyle(.init(lineWidth: 1, dash: [5]))
 					.annotation(alignment: .leading) {
