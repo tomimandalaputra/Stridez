@@ -32,26 +32,13 @@ struct StepBarChart: View {
 	}
 
 	var body: some View {
-		VStack {
-			NavigationLink(value: selectedTab) {
-				HStack {
-					VStack(alignment: .leading) {
-						Label("Steps", systemImage: "figure.walk")
-							.font(.title3.bold())
-							.foregroundStyle(.pink)
-
-						Text("Avg: \(Int(avgStepCount)) steps")
-							.font(.caption)
-					}
-
-					Spacer()
-
-					Image(systemName: "chevron.right")
-				}
-			}
-			.foregroundStyle(.secondary)
-			.padding(.bottom, 12)
-
+		ChartContainer(
+			title: "Steps",
+			symbol: "figure.walk",
+			subtitle: "Avg: \(Int(avgStepCount)) steps",
+			context: selectedTab,
+			isNav: true
+		) {
 			if chartData.isEmpty {
 				ChartEmptyView(
 					systemImageName: "chart.bar",
@@ -106,8 +93,6 @@ struct StepBarChart: View {
 				}
 			}
 		}
-		.padding()
-		.background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemFill)))
 		.sensoryFeedback(.selection, trigger: selectedDay)
 		.onChange(of: rawSelectedDate) { oldValue, newValue in
 			guard let oldValue, let newValue else { return }
