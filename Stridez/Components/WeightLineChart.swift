@@ -10,6 +10,7 @@ import SwiftUI
 
 struct WeightLineChart: View {
 	@State private var rawSelectedDate: Date?
+	@State private var selectedDay: Date?
 
 	var selectedTab: HealthMetricContext
 	var chartData: [HealthMetric]
@@ -111,6 +112,13 @@ struct WeightLineChart: View {
 		}
 		.padding()
 		.background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemFill)))
+		.sensoryFeedback(.selection, trigger: selectedDay)
+		.onChange(of: rawSelectedDate) { oldValue, newValue in
+			guard let oldValue, let newValue else { return }
+			if oldValue.weekdayInt != newValue.weekdayInt {
+				selectedDay = newValue
+			}
+		}
 	}
 }
 
