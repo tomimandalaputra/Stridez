@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddDataView: View {
 	@Environment(\.dismiss) private var dismiss
+	@Environment(HealthKitData.self) private var hkData
 	@Environment(HealthKitManager.self) private var hkManager
 
 	@State private var viewModel = AddDataViewModel()
@@ -80,14 +81,14 @@ struct AddDataView: View {
 			do {
 				if metric == .steps {
 					try await hkManager.addStepData(for: addDataDate, value: value)
-					hkManager.stepData = try await hkManager.fetchStepCount()
+					hkData.stepData = try await hkManager.fetchStepCount()
 				} else {
 					try await hkManager.addWeightData(for: addDataDate, value: value)
 					async let weightsForLineChart = hkManager.fetchWeights(daysBack: 28)
 					async let weightForDiffBarChart = hkManager.fetchWeights(daysBack: 29)
 
-					hkManager.weightData = try await weightsForLineChart
-					hkManager.weightDiffData = try await weightForDiffBarChart
+					hkData.weightData = try await weightsForLineChart
+					hkData.weightDiffData = try await weightForDiffBarChart
 				}
 
 				dismiss()
@@ -105,6 +106,7 @@ struct AddDataView: View {
 #Preview {
 	NavigationStack {
 		AddDataView(metric: .steps)
+			.environment(HealthKitData())
 			.environment(HealthKitManager())
 	}
 }

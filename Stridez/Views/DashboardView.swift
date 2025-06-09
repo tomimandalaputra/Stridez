@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DashboardView: View {
+	@Environment(HealthKitData.self) private var hkData
 	@Environment(HealthKitManager.self) private var hkManager
 	@State private var viewModel = DashboardViewModel()
 	@State private var selectedTab: HealthMetricContext = .steps
@@ -27,17 +28,17 @@ struct DashboardView: View {
 						case .steps:
 							StepBarChart(
 								selectedTab: selectedTab,
-								chartData: hkManager.stepData
+								chartData: hkData.stepData
 							)
 
-							StepPieChart(chartData: ChartMath.averageWeekdayCount(for: hkManager.stepData))
+							StepPieChart(chartData: ChartMath.averageWeekdayCount(for: hkData.stepData))
 						case .weight:
 							WeightLineChart(
 								selectedTab: selectedTab,
-								chartData: hkManager.weightData
+								chartData: hkData.weightData
 							)
 
-							WeightDiffBarChart(chartData: ChartMath.averageDailyWeightDiffs(for: hkManager.weightDiffData))
+							WeightDiffBarChart(chartData: ChartMath.averageDailyWeightDiffs(for: hkData.weightDiffData))
 					}
 				}
 			}
@@ -68,9 +69,9 @@ struct DashboardView: View {
 				async let weightsForLineChart = hkManager.fetchWeights(daysBack: 28)
 				async let weightForDiffBarChart = hkManager.fetchWeights(daysBack: 29)
 
-				hkManager.stepData = try await steps
-				hkManager.weightData = try await weightsForLineChart
-				hkManager.weightDiffData = try await weightForDiffBarChart
+				hkData.stepData = try await steps
+				hkData.weightData = try await weightsForLineChart
+				hkData.weightDiffData = try await weightForDiffBarChart
 			} catch CustomError.authNotDetermined {
 				viewModel.isShowingPermissionPrimingSheet = true
 			} catch CustomError.noData {
@@ -86,5 +87,6 @@ struct DashboardView: View {
 
 #Preview {
 	DashboardView()
+		.environment(HealthKitData())
 		.environment(HealthKitManager())
 }
