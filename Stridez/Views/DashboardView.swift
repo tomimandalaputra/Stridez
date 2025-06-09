@@ -9,13 +9,8 @@ import SwiftUI
 
 struct DashboardView: View {
 	@Environment(HealthKitManager.self) private var hkManager
-
 	@State private var viewModel = DashboardViewModel()
 	@State private var selectedTab: HealthMetricContext = .steps
-
-	private var colorNavigationStack: Color {
-		selectedTab == .steps ? Color.pink : Color.indigo
-	}
 
 	var body: some View {
 		NavigationStack {
@@ -47,27 +42,13 @@ struct DashboardView: View {
 				}
 			}
 			.padding()
-			.task {
-				do {
-					try await hkManager.fetchStepCount()
-					try await hkManager.fetchWeights()
-					try await hkManager.fetchWeightForDifferentials()
-				} catch CustomError.authNotDetermined {
-					viewModel.isShowingPermissionPrimingSheet = true
-				} catch CustomError.noData {
-					viewModel.fetchError = .noData
-					viewModel.isShowingAlert = true
-				} catch {
-					viewModel.fetchError = .unableToCompleteRequest
-					viewModel.isShowingAlert = true
-				}
-			}
+			.task { fetchHealthData() }
 			.navigationTitle("Dashboard")
 			.navigationDestination(for: HealthMetricContext.self) { metric in
 				HealthDataListView(metric: metric)
 			}
-			.sheet(isPresented: $viewModel.isShowingPermissionPrimingSheet, onDismiss: {
-				// fetch health data
+			.fullScreenCover(isPresented: $viewModel.isShowingPermissionPrimingSheet, onDismiss: {
+				fetchHealthData()
 			}, content: {
 				HealthKitPermissionPrimingView()
 			})
@@ -77,7 +58,29 @@ struct DashboardView: View {
 				Text(fetchError.failureReason)
 			}
 		}
-		.tint(colorNavigationStack)
+		.tint(selectedTab == .steps ? Color.pink : Color.indigo)
+	}
+
+	private func fetchHealthData() {
+		Task {
+			do {
+				async let steps = hkManager.fetchStepCount()
+				async let weightsForLineChart = hkManager.fetchWeights(daysBack: 28)
+				async let weightForDiffBarChart = hkManager.fetchWeights(daysBack: 29)
+
+				hkManager.stepData = try await steps
+				hkManager.weightData = try await weightsForLineChart
+				hkManager.weightDiffData = try await weightForDiffBarChart
+			} catch CustomError.authNotDetermined {
+				viewModel.isShowingPermissionPrimingSheet = true
+			} catch CustomError.noData {
+				viewModel.fetchError = .noData
+				viewModel.isShowingAlert = true
+			} catch {
+				viewModel.fetchError = .unableToCompleteRequest
+				viewModel.isShowingAlert = true
+			}
+		}
 	}
 }
 

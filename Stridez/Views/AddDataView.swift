@@ -24,9 +24,7 @@ struct AddDataView: View {
 		NavigationStack {
 			Form {
 				DatePicker("Date", selection: $addDataDate, displayedComponents: .date)
-
-				HStack {
-					Text(metric.title)
+				LabeledContent(metric.title) {
 					TextField("Value", text: $valueToAdd)
 						.multilineTextAlignment(.trailing)
 						.keyboardType(keyboardTypeByMetric)
@@ -34,11 +32,7 @@ struct AddDataView: View {
 			}
 			.toolbar {
 				ToolbarItem(placement: .topBarTrailing) {
-					Button(action: {
-						Task {
-							await addData()
-						}
-					}, label: {
+					Button(action: { addDataToHealthKit() }, label: {
 						Text("Add Data")
 					})
 				}
@@ -74,7 +68,7 @@ struct AddDataView: View {
 		}
 	}
 
-	private func addData() async {
+	private func addDataToHealthKit() {
 		guard let value = Double(valueToAdd.replacingOccurrences(of: ",", with: ".")) else {
 			viewModel.writeError = .invalidValue
 			viewModel.isShowingAlert = true
@@ -82,23 +76,20 @@ struct AddDataView: View {
 			return
 		}
 
-		if metric == .steps {
+		Task {
 			do {
-				try await hkManager.addStepData(for: addDataDate, value: value)
-				try await hkManager.fetchStepCount()
-				dismiss()
-			} catch let CustomError.sharingDenied(quantityType) {
-				viewModel.writeError = .sharingDenied(quantityType: quantityType)
-				viewModel.isShowingAlert = true
-			} catch {
-				viewModel.writeError = .unableToCompleteRequest
-				viewModel.isShowingAlert = true
-			}
-		} else {
-			do {
-				try await hkManager.addWeightData(for: addDataDate, value: value)
-				try await hkManager.fetchWeights()
-				try await hkManager.fetchWeightForDifferentials()
+				if metric == .steps {
+					try await hkManager.addStepData(for: addDataDate, value: value)
+					hkManager.stepData = try await hkManager.fetchStepCount()
+				} else {
+					try await hkManager.addWeightData(for: addDataDate, value: value)
+					async let weightsForLineChart = hkManager.fetchWeights(daysBack: 28)
+					async let weightForDiffBarChart = hkManager.fetchWeights(daysBack: 29)
+
+					hkManager.weightData = try await weightsForLineChart
+					hkManager.weightDiffData = try await weightForDiffBarChart
+				}
+
 				dismiss()
 			} catch let CustomError.sharingDenied(quantityType) {
 				viewModel.writeError = .sharingDenied(quantityType: quantityType)
