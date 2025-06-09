@@ -33,47 +33,55 @@ struct WeightDiffBarChart: View {
 			}
 			.padding(.bottom, 12)
 
-			Chart {
-				if let selectedData {
-					RuleMark(x: .value("Selected Data", selectedData.date, unit: .day))
-						.foregroundStyle(Color.secondary.opacity(0.3))
-						.offset(y: -10)
-						.annotation(
-							position: .top,
-							alignment: .center,
-							spacing: 0,
-							overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
-							content: {
-								AnnotationView(
-									seletedDate: selectedData.date,
-									seletedValue: selectedData.value,
-									fractionLenghtValue: 2,
-									styleTextColor: selectedData.value >= 0 ? Color.indigo : Color.mint
-								)
-							}
-						)
-				}
+			if chartData.isEmpty {
+				ChartEmptyView(
+					systemImageName: "chart.bar",
+					title: "No Data",
+					description: "There is no weight data from the Health App."
+				)
+			} else {
+				Chart {
+					if let selectedData {
+						RuleMark(x: .value("Selected Data", selectedData.date, unit: .day))
+							.foregroundStyle(Color.secondary.opacity(0.3))
+							.offset(y: -10)
+							.annotation(
+								position: .top,
+								alignment: .center,
+								spacing: 0,
+								overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
+								content: {
+									AnnotationView(
+										seletedDate: selectedData.date,
+										seletedValue: selectedData.value,
+										fractionLenghtValue: 2,
+										styleTextColor: selectedData.value >= 0 ? Color.indigo : Color.mint
+									)
+								}
+							)
+					}
 
-				ForEach(chartData) { weightDiff in
-					BarMark(
-						x: .value("Date", weightDiff.date, unit: .day),
-						y: .value("Weight Diffs", weightDiff.value)
-					)
-					.foregroundStyle(weightDiff.value >= 0 ? Color.indigo.gradient : Color.mint.gradient)
-					.opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1.0 : 0.3)
+					ForEach(chartData) { weightDiff in
+						BarMark(
+							x: .value("Date", weightDiff.date, unit: .day),
+							y: .value("Weight Diffs", weightDiff.value)
+						)
+						.foregroundStyle(weightDiff.value >= 0 ? Color.indigo.gradient : Color.mint.gradient)
+						.opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1.0 : 0.3)
+					}
 				}
-			}
-			.frame(height: 150)
-			.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-			.chartXAxis {
-				AxisMarks(values: .stride(by: .day)) {
-					AxisValueLabel(format: .dateTime.weekday(), centered: true)
+				.frame(height: 150)
+				.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+				.chartXAxis {
+					AxisMarks(values: .stride(by: .day)) {
+						AxisValueLabel(format: .dateTime.weekday(), centered: true)
+					}
 				}
-			}
-			.chartYAxis {
-				AxisMarks { value in
-					AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
-					AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+				.chartYAxis {
+					AxisMarks { value in
+						AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
+						AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+					}
 				}
 			}
 		}
@@ -90,5 +98,5 @@ struct WeightDiffBarChart: View {
 }
 
 #Preview {
-	WeightDiffBarChart(chartData: MockData.weightDiffs)
+	WeightDiffBarChart(chartData: [])
 }

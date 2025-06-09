@@ -47,66 +47,74 @@ struct WeightLineChart: View {
 			.foregroundStyle(.secondary)
 			.padding(.bottom, 12)
 
-			Chart {
-				if let seletedHealthMetric {
-					RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
-						.foregroundStyle(Color.secondary.opacity(0.3))
-						.offset(y: -10)
-						.annotation(
-							position: .top,
-							alignment: .center,
-							spacing: 0,
-							overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
-							content: {
-								AnnotationView(
-									seletedDate: seletedHealthMetric.date,
-									seletedValue: seletedHealthMetric.value,
-									fractionLenghtValue: 1,
-									styleTextColor: .indigo
-								)
-							}
-						)
-				}
-
-				RuleMark(y: .value("Goal", 138))
-					.foregroundStyle(Color.mint)
-					.lineStyle(.init(lineWidth: 1, dash: [5]))
-					.annotation(alignment: .leading) {
-						Text("Goal")
-							.font(.caption)
-							.foregroundStyle(Color.secondary)
+			if chartData.isEmpty {
+				ChartEmptyView(
+					systemImageName: "chart.xyaxis.line",
+					title: "No Data",
+					description: "There is no weight data from the Health App."
+				)
+			} else {
+				Chart {
+					if let seletedHealthMetric {
+						RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
+							.foregroundStyle(Color.secondary.opacity(0.3))
+							.offset(y: -10)
+							.annotation(
+								position: .top,
+								alignment: .center,
+								spacing: 0,
+								overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
+								content: {
+									AnnotationView(
+										seletedDate: seletedHealthMetric.date,
+										seletedValue: seletedHealthMetric.value,
+										fractionLenghtValue: 1,
+										styleTextColor: .indigo
+									)
+								}
+							)
 					}
 
-				ForEach(chartData) { weights in
-					AreaMark(
-						x: .value("Day", weights.date, unit: .day),
-						yStart: .value("Value", weights.value),
-						yEnd: .value("Min Value", minValue)
-					)
-					.foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .clear]))
-					.interpolationMethod(.catmullRom)
+					RuleMark(y: .value("Goal", 138))
+						.foregroundStyle(Color.mint)
+						.lineStyle(.init(lineWidth: 1, dash: [5]))
+						.annotation(alignment: .leading) {
+							Text("Goal")
+								.font(.caption)
+								.foregroundStyle(Color.secondary)
+						}
 
-					LineMark(
-						x: .value("Day", weights.date, unit: .day),
-						y: .value("Value", weights.value)
-					)
-					.foregroundStyle(Color.indigo)
-					.interpolationMethod(.catmullRom)
-					.symbol(.circle)
+					ForEach(chartData) { weights in
+						AreaMark(
+							x: .value("Day", weights.date, unit: .day),
+							yStart: .value("Value", weights.value),
+							yEnd: .value("Min Value", minValue)
+						)
+						.foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .clear]))
+						.interpolationMethod(.catmullRom)
+
+						LineMark(
+							x: .value("Day", weights.date, unit: .day),
+							y: .value("Value", weights.value)
+						)
+						.foregroundStyle(Color.indigo)
+						.interpolationMethod(.catmullRom)
+						.symbol(.circle)
+					}
 				}
-			}
-			.frame(height: 150)
-			.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-			.chartYScale(domain: .automatic(includesZero: false))
-			.chartXAxis {
-				AxisMarks {
-					AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+				.frame(height: 150)
+				.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+				.chartYScale(domain: .automatic(includesZero: false))
+				.chartXAxis {
+					AxisMarks {
+						AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+					}
 				}
-			}
-			.chartYAxis {
-				AxisMarks { _ in
-					AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
-					AxisValueLabel()
+				.chartYAxis {
+					AxisMarks { _ in
+						AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
+						AxisValueLabel()
+					}
 				}
 			}
 		}
@@ -123,5 +131,5 @@ struct WeightLineChart: View {
 }
 
 #Preview {
-	WeightLineChart(selectedTab: .weight, chartData: MockData.weights)
+	WeightLineChart(selectedTab: .weight, chartData: [])
 }
