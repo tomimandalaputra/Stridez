@@ -55,9 +55,11 @@ struct DashboardView: View {
 				} catch CustomError.authNotDetermined {
 					viewModel.isShowingPermissionPrimingSheet = true
 				} catch CustomError.noData {
-					print("❌ No data error")
+					viewModel.fetchError = .noData
+					viewModel.isShowingAlert = true
 				} catch {
-					print("❌ Unabled to complete request")
+					viewModel.fetchError = .unableToCompleteRequest
+					viewModel.isShowingAlert = true
 				}
 			}
 			.navigationTitle("Dashboard")
@@ -69,6 +71,11 @@ struct DashboardView: View {
 			}, content: {
 				HealthKitPermissionPrimingView()
 			})
+			.alert(isPresented: $viewModel.isShowingAlert, error: viewModel.fetchError) { _ in
+				// Actions
+			} message: { fetchError in
+				Text(fetchError.failureReason)
+			}
 		}
 		.tint(colorNavigationStack)
 	}

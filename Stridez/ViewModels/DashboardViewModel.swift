@@ -10,4 +10,6 @@ import Foundation
 @Observable
 class DashboardViewModel {
 	var isShowingPermissionPrimingSheet: Bool = false
+	var isShowingAlert: Bool = false
+	var fetchError: CustomError = .noData
 }

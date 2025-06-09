@@ -11,6 +11,7 @@ struct AddDataView: View {
 	@Environment(\.dismiss) private var dismiss
 	@Environment(HealthKitManager.self) private var hkManager
 
+	@State private var viewModel = AddDataViewModel()
 	@State private var addDataDate: Date = .now
 	@State private var valueToAdd: String = ""
 
@@ -55,6 +56,21 @@ struct AddDataView: View {
 					})
 				}
 			}
+			.alert(isPresented: $viewModel.isShowingAlert, error: viewModel.writeError) { fetchError in
+				// Actions
+				switch fetchError {
+					case .noData, .authNotDetermined, .unableToCompleteRequest:
+						EmptyView()
+					case .sharingDenied(let quantityType):
+						Button("Settings", action: {
+							UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+						})
+
+						Button("Cancel", role: .cancel, action: {})
+				}
+			} message: { fetchError in
+				Text(fetchError.failureReason)
+			}
 		}
 	}
 
@@ -64,10 +80,12 @@ struct AddDataView: View {
 				try await hkManager.addStepData(for: addDataDate, value: Double(valueToAdd)!)
 				try await hkManager.fetchStepCount()
 				dismiss()
-			} catch let CustomError.sharingDenied(quantityType) {
-				print("❌ Sharing denied for \(quantityType)")
+			} catch CustomError.sharingDenied(let quantityType) {
+				viewModel.writeError = .sharingDenied(quantityType: quantityType)
+				viewModel.isShowingAlert = true
 			} catch {
-				print("❌ Data list view unabled to complete request")
+				viewModel.writeError = .unableToCompleteRequest
+				viewModel.isShowingAlert = true
 			}
 		} else {
 			do {
@@ -75,10 +93,12 @@ struct AddDataView: View {
 				try await hkManager.fetchWeights()
 				try await hkManager.fetchWeightForDifferentials()
 				dismiss()
-			} catch let CustomError.sharingDenied(quantityType) {
-				print("❌ Sharing denied for \(quantityType)")
+			} catch CustomError.sharingDenied(let quantityType) {
+				viewModel.writeError = .sharingDenied(quantityType: quantityType)
+				viewModel.isShowingAlert = true
 			} catch {
-				print("❌ Data list view unabled to complete request")
+				viewModel.writeError = .unableToCompleteRequest
+				viewModel.isShowingAlert = true
 			}
 		}
 	}
