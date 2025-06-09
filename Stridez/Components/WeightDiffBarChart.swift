@@ -44,12 +44,16 @@ struct WeightDiffBarChart: View {
 				}
 
 				ForEach(chartData) { weightDiff in
-					BarMark(
-						x: .value("Date", weightDiff.date, unit: .day),
-						y: .value("Weight Diffs", weightDiff.value)
-					)
-					.foregroundStyle(weightDiff.value >= 0 ? Color.indigo.gradient : Color.mint.gradient)
-					.opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1.0 : 0.3)
+					Plot {
+						BarMark(
+							x: .value("Date", weightDiff.date, unit: .day),
+							y: .value("Weight Diffs", weightDiff.value)
+						)
+						.foregroundStyle(weightDiff.value >= 0 ? Color.indigo.gradient : Color.mint.gradient)
+						.opacity(rawSelectedDate == nil || weightDiff.date == selectedData?.date ? 1.0 : 0.3)
+					}
+					.accessibilityLabel(weightDiff.date.weekdayTitle)
+					.accessibilityValue("\(weightDiff.value.formatted(.number.precision(.fractionLength(1)).sign(strategy: .always()))) step")
 				}
 			}
 			.frame(height: 150)

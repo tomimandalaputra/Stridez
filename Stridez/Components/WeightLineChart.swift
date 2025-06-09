@@ -62,24 +62,29 @@ struct WeightLineChart: View {
 								.font(.caption)
 								.foregroundStyle(Color.secondary)
 						}
+						.accessibilityHidden(true)
 				}
 
 				ForEach(chartData) { weights in
-					AreaMark(
-						x: .value("Day", weights.date, unit: .day),
-						yStart: .value("Value", weights.value),
-						yEnd: .value("Min Value", minValue)
-					)
-					.foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .clear]))
-					.interpolationMethod(.catmullRom)
+					Plot {
+						AreaMark(
+							x: .value("Day", weights.date, unit: .day),
+							yStart: .value("Value", weights.value),
+							yEnd: .value("Min Value", minValue)
+						)
+						.foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .clear]))
+						.interpolationMethod(.catmullRom)
 
-					LineMark(
-						x: .value("Day", weights.date, unit: .day),
-						y: .value("Value", weights.value)
-					)
-					.foregroundStyle(Color.indigo)
-					.interpolationMethod(.catmullRom)
-					.symbol(.circle)
+						LineMark(
+							x: .value("Day", weights.date, unit: .day),
+							y: .value("Value", weights.value)
+						)
+						.foregroundStyle(Color.indigo)
+						.interpolationMethod(.catmullRom)
+						.symbol(.circle)
+					}
+					.accessibilityLabel(weights.date.accessibilityDate)
+					.accessibilityValue("\(weights.value.formatted(.number.precision(.fractionLength(1)))) step")
 				}
 			}
 			.frame(height: 150)
