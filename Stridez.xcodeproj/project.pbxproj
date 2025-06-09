@@ -10,11 +10,27 @@
 		6FE6751B2DF52D3F00EB4B2D /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 6FE6751A2DF52D3F00EB4B2D /* Algorithms */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		6F9DC7462DF726ED005CB82D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6FA1BF502DF3DB07009EFAC5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6FA1BF572DF3DB07009EFAC5;
+			remoteInfo = Stridez;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		6F9DC7422DF726ED005CB82D /* Stridez Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Stridez Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FA1BF582DF3DB07009EFAC5 /* Stridez.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stridez.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6F9DC7432DF726ED005CB82D /* Stridez Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Stridez Tests";
+			sourceTree = "<group>";
+		};
 		6FA1BF5A2DF3DB07009EFAC5 /* Stridez */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Stridez;
@@ -23,6 +39,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6F9DC73F2DF726ED005CB82D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6FA1BF552DF3DB07009EFAC5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -38,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				6FA1BF5A2DF3DB07009EFAC5 /* Stridez */,
+				6F9DC7432DF726ED005CB82D /* Stridez Tests */,
 				6FA1BF592DF3DB07009EFAC5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				6FA1BF582DF3DB07009EFAC5 /* Stridez.app */,
+				6F9DC7422DF726ED005CB82D /* Stridez Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,6 +78,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6F9DC7412DF726ED005CB82D /* Stridez Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F9DC7482DF726ED005CB82D /* Build configuration list for PBXNativeTarget "Stridez Tests" */;
+			buildPhases = (
+				6F9DC73E2DF726ED005CB82D /* Sources */,
+				6F9DC73F2DF726ED005CB82D /* Frameworks */,
+				6F9DC7402DF726ED005CB82D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6F9DC7472DF726ED005CB82D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6F9DC7432DF726ED005CB82D /* Stridez Tests */,
+			);
+			name = "Stridez Tests";
+			packageProductDependencies = (
+			);
+			productName = "Stridez Tests";
+			productReference = 6F9DC7422DF726ED005CB82D /* Stridez Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6FA1BF572DF3DB07009EFAC5 /* Stridez */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6FA1BF642DF3DB08009EFAC5 /* Build configuration list for PBXNativeTarget "Stridez" */;
@@ -86,6 +134,10 @@
 				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
+					6F9DC7412DF726ED005CB82D = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 6FA1BF572DF3DB07009EFAC5;
+					};
 					6FA1BF572DF3DB07009EFAC5 = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -109,11 +161,19 @@
 			projectRoot = "";
 			targets = (
 				6FA1BF572DF3DB07009EFAC5 /* Stridez */,
+				6F9DC7412DF726ED005CB82D /* Stridez Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6F9DC7402DF726ED005CB82D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6FA1BF562DF3DB07009EFAC5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,6 +184,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6F9DC73E2DF726ED005CB82D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6FA1BF542DF3DB07009EFAC5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -133,7 +200,56 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6F9DC7472DF726ED005CB82D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6FA1BF572DF3DB07009EFAC5 /* Stridez */;
+			targetProxy = 6F9DC7462DF726ED005CB82D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		6F9DC7492DF726ED005CB82D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7M5K7SZ5HW;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tukucode.Stridez-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Stridez.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Stridez";
+			};
+			name = Debug;
+		};
+		6F9DC74A2DF726ED005CB82D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7M5K7SZ5HW;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.tukucode.Stridez-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Stridez.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Stridez";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		6FA1BF622DF3DB08009EFAC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -337,6 +453,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6F9DC7482DF726ED005CB82D /* Build configuration list for PBXNativeTarget "Stridez Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F9DC7492DF726ED005CB82D /* Debug */,
+				6F9DC74A2DF726ED005CB82D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6FA1BF532DF3DB07009EFAC5 /* Build configuration list for PBXProject "Stridez" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
