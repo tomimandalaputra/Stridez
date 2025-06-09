@@ -60,14 +60,27 @@ struct AddDataView: View {
 
 	private func addData() async {
 		if metric == .steps {
-			await hkManager.addStepData(for: addDataDate, value: Double(valueToAdd)!)
-			await hkManager.fetchStepCount()
+			do {
+				try await hkManager.addStepData(for: addDataDate, value: Double(valueToAdd)!)
+				try await hkManager.fetchStepCount()
+				dismiss()
+			} catch let CustomError.sharingDenied(quantityType) {
+				print("❌ Sharing denied for \(quantityType)")
+			} catch {
+				print("❌ Data list view unabled to complete request")
+			}
 		} else {
-			await hkManager.addWeightData(for: addDataDate, value: Double(valueToAdd)!)
-			await hkManager.fetchWeights()
-			await hkManager.fetchWeightForDifferentials()
+			do {
+				try await hkManager.addWeightData(for: addDataDate, value: Double(valueToAdd)!)
+				try await hkManager.fetchWeights()
+				try await hkManager.fetchWeightForDifferentials()
+				dismiss()
+			} catch let CustomError.sharingDenied(quantityType) {
+				print("❌ Sharing denied for \(quantityType)")
+			} catch {
+				print("❌ Data list view unabled to complete request")
+			}
 		}
-		dismiss()
 	}
 }
 
