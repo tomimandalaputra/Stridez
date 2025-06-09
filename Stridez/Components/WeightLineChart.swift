@@ -26,19 +26,12 @@ struct WeightLineChart: View {
 		chartData.map { $0.value }.min() ?? 0
 	}
 
-	var subtitle: String {
-		let average = chartData.map { $0.value }.average
-		return "Avg: \(average.formatted(.number.precision(.fractionLength(1)))) lbs"
+	var averageWeights: Double {
+		chartData.map { $0.value }.average
 	}
 
 	var body: some View {
-		ChartContainer(
-			title: "Weight",
-			symbol: "figure",
-			subtitle: subtitle,
-			context: selectedTab,
-			isNav: true
-		) {
+		ChartContainer(chartType: .weightLine(average: averageWeights)) {
 			Chart {
 				if let seletedHealthMetric {
 					RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
