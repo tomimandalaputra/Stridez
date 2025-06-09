@@ -27,26 +27,13 @@ struct WeightLineChart: View {
 	}
 
 	var body: some View {
-		VStack {
-			NavigationLink(value: selectedTab) {
-				HStack {
-					VStack(alignment: .leading) {
-						Label("Weight", systemImage: "figure")
-							.font(.title3.bold())
-							.foregroundStyle(Color.indigo)
-
-						Text("Avg: 180 lbs")
-							.font(.caption)
-					}
-
-					Spacer()
-
-					Image(systemName: "chevron.right")
-				}
-			}
-			.foregroundStyle(.secondary)
-			.padding(.bottom, 12)
-
+		ChartContainer(
+			title: "Weight",
+			symbol: "figure",
+			subtitle: "Avg: 180 lbs",
+			context: selectedTab,
+			isNav: true
+		) {
 			if chartData.isEmpty {
 				ChartEmptyView(
 					systemImageName: "chart.xyaxis.line",
@@ -118,8 +105,6 @@ struct WeightLineChart: View {
 				}
 			}
 		}
-		.padding()
-		.background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemFill)))
 		.sensoryFeedback(.selection, trigger: selectedDay)
 		.onChange(of: rawSelectedDate) { oldValue, newValue in
 			guard let oldValue, let newValue else { return }

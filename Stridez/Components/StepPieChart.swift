@@ -24,18 +24,13 @@ struct StepPieChart: View {
 	var chartData: [WeekdayChartData]
 
 	var body: some View {
-		VStack(alignment: .leading) {
-			VStack(alignment: .leading) {
-				Label("Averages", systemImage: "calendar")
-					.font(.title3.bold())
-					.foregroundStyle(.pink)
-
-				Text("Last 28 Days")
-					.font(.caption)
-					.foregroundStyle(.secondary)
-			}
-			.padding(.bottom, 12)
-
+		ChartContainer(
+			title: "Averages",
+			symbol: "calendar",
+			subtitle: "Last 28 Days",
+			context: .steps,
+			isNav: false
+		) {
 			if chartData.isEmpty {
 				ChartEmptyView(
 					systemImageName: "chart.pie",
@@ -80,8 +75,6 @@ struct StepPieChart: View {
 				}
 			}
 		}
-		.padding()
-		.background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemFill)))
 		.sensoryFeedback(.selection, trigger: selectedDay)
 		.onChange(of: selectedWeekday) { oldValue, newValue in
 			guard let oldValue, let newValue else {

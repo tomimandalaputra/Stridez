@@ -21,18 +21,13 @@ struct WeightDiffBarChart: View {
 	}
 
 	var body: some View {
-		VStack(alignment: .leading) {
-			VStack(alignment: .leading) {
-				Label("Average Weight Change", systemImage: "figure")
-					.font(.title3.bold())
-					.foregroundStyle(Color.indigo)
-
-				Text("Per Weekday (Last 28 days)")
-					.font(.caption)
-					.foregroundStyle(Color.secondary)
-			}
-			.padding(.bottom, 12)
-
+		ChartContainer(
+			title: "Average Weight Change",
+			symbol: "figure",
+			subtitle: "Per Weekday (Last 28 days)",
+			context: .weight,
+			isNav: false
+		) {
 			if chartData.isEmpty {
 				ChartEmptyView(
 					systemImageName: "chart.bar",
@@ -85,8 +80,6 @@ struct WeightDiffBarChart: View {
 				}
 			}
 		}
-		.padding()
-		.background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemFill)))
 		.sensoryFeedback(.selection, trigger: selectedDay)
 		.onChange(of: rawSelectedDate) { oldValue, newValue in
 			guard let oldValue, let newValue else { return }
