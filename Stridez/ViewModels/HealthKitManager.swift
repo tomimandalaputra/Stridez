@@ -10,13 +10,17 @@ import HealthKit
 import Observation
 
 @Observable
-class HealthKitManager {
-	let store = HKHealthStore()
-	let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
-
+@MainActor
+final class HealthKitData: Sendable {
 	var stepData: [HealthMetric] = []
 	var weightData: [HealthMetric] = []
 	var weightDiffData: [HealthMetric] = []
+}
+
+@Observable
+final class HealthKitManager: Sendable {
+	let store = HKHealthStore()
+	let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
 
 	/// Create a DateInterval between two dates
 	/// - Parameters:
