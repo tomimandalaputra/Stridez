@@ -20,9 +20,9 @@ struct HealthDataListView: View {
 
 	var body: some View {
 		List(listData.reversed()) { data in
-			HStack {
+			LabeledContent {
 				Text(data.date, format: .dateTime.month().day().year())
-				Spacer()
+			} label: {
 				Text(data.value, format: .number.precision(.fractionLength(fractionLengthByMetric)))
 			}
 		}

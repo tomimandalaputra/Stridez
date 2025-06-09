@@ -26,42 +26,41 @@ struct WeightLineChart: View {
 		chartData.map { $0.value }.min() ?? 0
 	}
 
+	var subtitle: String {
+		let average = chartData.map { $0.value }.average
+		return "Avg: \(average.formatted(.number.precision(.fractionLength(1)))) lbs"
+	}
+
 	var body: some View {
 		ChartContainer(
 			title: "Weight",
 			symbol: "figure",
-			subtitle: "Avg: 180 lbs",
+			subtitle: subtitle,
 			context: selectedTab,
 			isNav: true
 		) {
-			if chartData.isEmpty {
-				ChartEmptyView(
-					systemImageName: "chart.xyaxis.line",
-					title: "No Data",
-					description: "There is no weight data from the Health App."
-				)
-			} else {
-				Chart {
-					if let seletedHealthMetric {
-						RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
-							.foregroundStyle(Color.secondary.opacity(0.3))
-							.offset(y: -10)
-							.annotation(
-								position: .top,
-								alignment: .center,
-								spacing: 0,
-								overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
-								content: {
-									AnnotationView(
-										seletedDate: seletedHealthMetric.date,
-										seletedValue: seletedHealthMetric.value,
-										fractionLenghtValue: 1,
-										styleTextColor: .indigo
-									)
-								}
-							)
-					}
+			Chart {
+				if let seletedHealthMetric {
+					RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
+						.foregroundStyle(Color.secondary.opacity(0.3))
+						.offset(y: -10)
+						.annotation(
+							position: .top,
+							alignment: .center,
+							spacing: 0,
+							overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
+							content: {
+								AnnotationView(
+									seletedDate: seletedHealthMetric.date,
+									seletedValue: seletedHealthMetric.value,
+									fractionLenghtValue: 1,
+									styleTextColor: .indigo
+								)
+							}
+						)
+				}
 
+				if !chartData.isEmpty {
 					RuleMark(y: .value("Goal", 138))
 						.foregroundStyle(Color.mint)
 						.lineStyle(.init(lineWidth: 1, dash: [5]))
@@ -70,38 +69,46 @@ struct WeightLineChart: View {
 								.font(.caption)
 								.foregroundStyle(Color.secondary)
 						}
-
-					ForEach(chartData) { weights in
-						AreaMark(
-							x: .value("Day", weights.date, unit: .day),
-							yStart: .value("Value", weights.value),
-							yEnd: .value("Min Value", minValue)
-						)
-						.foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .clear]))
-						.interpolationMethod(.catmullRom)
-
-						LineMark(
-							x: .value("Day", weights.date, unit: .day),
-							y: .value("Value", weights.value)
-						)
-						.foregroundStyle(Color.indigo)
-						.interpolationMethod(.catmullRom)
-						.symbol(.circle)
-					}
 				}
-				.frame(height: 150)
-				.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-				.chartYScale(domain: .automatic(includesZero: false))
-				.chartXAxis {
-					AxisMarks {
-						AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
-					}
+
+				ForEach(chartData) { weights in
+					AreaMark(
+						x: .value("Day", weights.date, unit: .day),
+						yStart: .value("Value", weights.value),
+						yEnd: .value("Min Value", minValue)
+					)
+					.foregroundStyle(Gradient(colors: [.indigo.opacity(0.5), .clear]))
+					.interpolationMethod(.catmullRom)
+
+					LineMark(
+						x: .value("Day", weights.date, unit: .day),
+						y: .value("Value", weights.value)
+					)
+					.foregroundStyle(Color.indigo)
+					.interpolationMethod(.catmullRom)
+					.symbol(.circle)
 				}
-				.chartYAxis {
-					AxisMarks { _ in
-						AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
-						AxisValueLabel()
-					}
+			}
+			.frame(height: 150)
+			.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+			.chartYScale(domain: .automatic(includesZero: false))
+			.chartXAxis {
+				AxisMarks {
+					AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+				}
+			}
+			.chartYAxis {
+				AxisMarks { _ in
+					AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
+					AxisValueLabel()
+				}
+			}.overlay {
+				if chartData.isEmpty {
+					ChartEmptyView(
+						systemImageName: "chart.xyaxis.line",
+						title: "No Data",
+						description: "There is no weight data from the Health App."
+					)
 				}
 			}
 		}

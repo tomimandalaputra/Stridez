@@ -24,9 +24,7 @@ struct AddDataView: View {
 		NavigationStack {
 			Form {
 				DatePicker("Date", selection: $addDataDate, displayedComponents: .date)
-
-				HStack {
-					Text(metric.title)
+				LabeledContent(metric.title) {
 					TextField("Value", text: $valueToAdd)
 						.multilineTextAlignment(.trailing)
 						.keyboardType(keyboardTypeByMetric)
