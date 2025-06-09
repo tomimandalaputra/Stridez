@@ -9,8 +9,8 @@ import SwiftUI
 
 struct DashboardView: View {
 	@Environment(HealthKitManager.self) private var hkManager
-	@AppStorage("hasSeenPermissionPriming") private var hasSeenPermissionPriming = false
-	@State private var isShowingPermissionPrimingSheet = false
+
+	@State private var viewModel = DashboardViewModel()
 	@State private var selectedTab: HealthMetricContext = .steps
 
 	private var colorNavigationStack: Color {
@@ -48,20 +48,34 @@ struct DashboardView: View {
 			}
 			.padding()
 			.task {
-				await hkManager.fetchStepCount()
-				await hkManager.fetchWeights()
-				await hkManager.fetchWeightForDifferentials()
-				isShowingPermissionPrimingSheet = !hasSeenPermissionPriming
+				do {
+					try await hkManager.fetchStepCount()
+					try await hkManager.fetchWeights()
+					try await hkManager.fetchWeightForDifferentials()
+				} catch CustomError.authNotDetermined {
+					viewModel.isShowingPermissionPrimingSheet = true
+				} catch CustomError.noData {
+					viewModel.fetchError = .noData
+					viewModel.isShowingAlert = true
+				} catch {
+					viewModel.fetchError = .unableToCompleteRequest
+					viewModel.isShowingAlert = true
+				}
 			}
 			.navigationTitle("Dashboard")
 			.navigationDestination(for: HealthMetricContext.self) { metric in
 				HealthDataListView(metric: metric)
 			}
-			.sheet(isPresented: $isShowingPermissionPrimingSheet, onDismiss: {
+			.sheet(isPresented: $viewModel.isShowingPermissionPrimingSheet, onDismiss: {
 				// fetch health data
 			}, content: {
-				HealthKitPermissionPrimingView(hasSeen: $hasSeenPermissionPriming)
+				HealthKitPermissionPrimingView()
 			})
+			.alert(isPresented: $viewModel.isShowingAlert, error: viewModel.fetchError) { _ in
+				// Actions
+			} message: { fetchError in
+				Text(fetchError.failureReason)
+			}
 		}
 		.tint(colorNavigationStack)
 	}

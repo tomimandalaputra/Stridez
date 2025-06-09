@@ -12,7 +12,6 @@ struct HealthDataListView: View {
 	@State private var isShowingAddData: Bool = false
 
 	var metric: HealthMetricContext
-
 	private var listData: [HealthMetric] {
 		metric == .steps ? hkManager.stepData : hkManager.weightData
 	}

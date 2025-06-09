@@ -10,6 +10,7 @@ import SwiftUI
 
 struct StepBarChart: View {
 	@State private var rawSelectedDate: Date?
+	@State private var selectedDay: Date?
 
 	var selectedTab: HealthMetricContext
 	var chartData: [HealthMetric]
@@ -51,57 +52,72 @@ struct StepBarChart: View {
 			.foregroundStyle(.secondary)
 			.padding(.bottom, 12)
 
-			Chart {
-				if let seletedHealthMetric {
-					RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
-						.foregroundStyle(Color.secondary.opacity(0.3))
-						.offset(y: -10)
-						.annotation(
-							position: .top,
-							alignment: .center,
-							spacing: 0,
-							overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
-							content: {
-								AnnotationView(
-									seletedDate: seletedHealthMetric.date,
-									seletedValue: seletedHealthMetric.value,
-								)
-							}
+			if chartData.isEmpty {
+				ChartEmptyView(
+					systemImageName: "chart.bar",
+					title: "No Data",
+					description: "There is no step count data from the Health App."
+				)
+			} else {
+				Chart {
+					if let seletedHealthMetric {
+						RuleMark(x: .value("Selected Metric", seletedHealthMetric.date, unit: .day))
+							.foregroundStyle(Color.secondary.opacity(0.3))
+							.offset(y: -10)
+							.annotation(
+								position: .top,
+								alignment: .center,
+								spacing: 0,
+								overflowResolution: .init(x: .fit(to: .chart), y: .disabled),
+								content: {
+									AnnotationView(
+										seletedDate: seletedHealthMetric.date,
+										seletedValue: seletedHealthMetric.value,
+									)
+								}
+							)
+					}
+
+					RuleMark(y: .value("Average", avgStepCount))
+						.foregroundStyle(Color.secondary)
+						.lineStyle(.init(lineWidth: 1, dash: [5]))
+
+					ForEach(chartData) { steps in
+						BarMark(
+							x: .value("Date", steps.date, unit: .day),
+							y: .value("Steps", steps.value)
 						)
+						.foregroundStyle(Color.pink.gradient)
+						.opacity(rawSelectedDate == nil || steps.date == seletedHealthMetric?.date ? 1.0 : 0.3)
+					}
 				}
-
-				RuleMark(y: .value("Average", avgStepCount))
-					.foregroundStyle(Color.secondary)
-					.lineStyle(.init(lineWidth: 1, dash: [5]))
-
-				ForEach(chartData) { steps in
-					BarMark(
-						x: .value("Date", steps.date, unit: .day),
-						y: .value("Steps", steps.value)
-					)
-					.foregroundStyle(Color.pink.gradient)
-					.opacity(rawSelectedDate == nil || steps.date == seletedHealthMetric?.date ? 1.0 : 0.3)
+				.frame(height: 150)
+				.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
+				.chartXAxis {
+					AxisMarks {
+						AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+					}
 				}
-			}
-			.frame(height: 150)
-			.chartXSelection(value: $rawSelectedDate.animation(.easeInOut))
-			.chartXAxis {
-				AxisMarks {
-					AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
-				}
-			}
-			.chartYAxis {
-				AxisMarks { value in
-					AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
-					AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+				.chartYAxis {
+					AxisMarks { value in
+						AxisGridLine().foregroundStyle(Color.secondary.opacity(0.3))
+						AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+					}
 				}
 			}
 		}
 		.padding()
 		.background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemFill)))
+		.sensoryFeedback(.selection, trigger: selectedDay)
+		.onChange(of: rawSelectedDate) { oldValue, newValue in
+			guard let oldValue, let newValue else { return }
+			if oldValue.weekdayInt != newValue.weekdayInt {
+				selectedDay = newValue
+			}
+		}
 	}
 }
 
 #Preview {
-	StepBarChart(selectedTab: HealthMetricContext.steps, chartData: MockData.steps)
+	StepBarChart(selectedTab: HealthMetricContext.steps, chartData: [])
 }
