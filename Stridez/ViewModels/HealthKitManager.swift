@@ -83,6 +83,22 @@ import Observation
 		} catch {}
 	}
 
+	func addStepData(for date: Date, value: Double) async {
+		let stepQuantity = HKQuantity(unit: .count(), doubleValue: value)
+		let stepSample = HKQuantitySample(type: HKQuantityType(.stepCount), quantity: stepQuantity, start: date, end: date)
+		do {
+			try await store.save(stepSample)
+		} catch {}
+	}
+
+	func addWeightData(for date: Date, value: Double) async {
+		let weightQuanity = HKQuantity(unit: .pound(), doubleValue: value)
+		let weightSample = HKQuantitySample(type: HKQuantityType(.bodyMass), quantity: weightQuanity, start: date, end: date)
+		do {
+			try await store.save(weightSample)
+		} catch {}
+	}
+
 //	func addSimulatorData() async {
 //		var mockSamples: [HKQuantitySample] = []
 //
